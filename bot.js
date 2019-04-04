@@ -75,6 +75,7 @@ bot.on('message', function (user, userID, channelID, message, evt) {
         args = args.splice(1); // list of everything after !command
 
 		// Not the best way to go about command alias lookup but effiency isnt the goal, programming simplicity is.
+		//TODO: Look at alternitaves to doing an if else. I want to have an array of all commands somewhere to access too. Maybe dictionaries with [CMD_ALIASES : CMD_LOGIC() ] or something. Could also do it class based and split classes among files.
 		if(ALIAS_help.includes(cmd)){ //!help
 
 			helpMenu();
@@ -117,7 +118,7 @@ function echoMessage(args){
 //Sends message to the channel with ID ChannelID
 function sendMessage(message, channelID){
 	bot.sendMessage({ to: channelID, message: message });
-	console.log(" Message send : ' " + message + " '");
+	console.log(" * MESSAGE : ' " + message + " '");
 }
 
 //Select a random item from a list
