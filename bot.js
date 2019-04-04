@@ -26,17 +26,17 @@ var ALIAS_help = [
 "?",
 "h",
 "-?"
-]
+];
 
 var ALIAS_testArg = [
 "test"
-]
+];
 
 var ALIAS_echo = {
 "echo",
 "simonsays",
 "say"
-}
+};
 //GLOBAL GARBAGE
 
 var lastMessegeChannelID;
@@ -51,7 +51,6 @@ logger.add(new logger.transports.Console, {
 });
 
 logger.level = 'debug';
-
 
 // Initialize Discord Bot
 var bot = new Discord.Client({
@@ -85,18 +84,18 @@ bot.on('message', function (user, userID, channelID, message, evt) {
 		// Not the best way to go about command alias lookup but effiency isnt the goal, programming simplicity is.
 		if(ALIAS_help.includes(cmd)){
 			
-			helpMenu()
+			helpMenu();
 			
 		}else if(ALIAS_testArg.includes(cmd) && args.length > 3){
-			sendMessage("test called and args > 3", lastMessegeChannelID)
+			sendMessage("test called and args > 3", lastMessegeChannelID);
 			
 			args.forEach(function(arg){
-				sendMessage("argument: " + arg, lastMessegeChannelID)
+				sendMessage("argument: " + arg, lastMessegeChannelID);
 			})
 			
 		}else{ //If no valid command has been entered
 		
-			sendMessage(selectRandomFromList(unknownCommandErrorMessages), channelID)
+			sendMessage(selectRandomFromList(unknownCommandErrorMessages), channelID);
 			
 		}
 		
@@ -104,20 +103,20 @@ bot.on('message', function (user, userID, channelID, message, evt) {
 });
 
 function helpMenu(){
-	sendMessage("***HELP MENU***", lastMessegeChannelID)
+	sendMessage("***HELP MENU***", lastMessegeChannelID);
 }
 
 function sendMessage(message, channelID){
 	
-	bot.sendMessage({ to: channelID, message: message }); // JS syntax is weird ngl
+	bot.sendMessage({ to: channelID, message: message });
 	
 }
 
 
 function selectRandomFromList(randomList){
 	
-	let randomIndex = Math.floor(Math.random() * (randomList.length + 1))
-	return randomList[randomIndex]
+	let randomIndex = Math.floor(Math.random() * (randomList.length + 1));
+	return randomList[randomIndex];
 	
 }
 
