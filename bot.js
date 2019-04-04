@@ -12,7 +12,8 @@ let unknownCommandErrorMessages = [    // Will pick one of these as the message 
 	"I dont know what you mean by 'AION stop pounding my ass'.",
 	"Invalid input, dipshit.",
 	"Im out of insults and I dont know what that command is.",
-	"ERROR - unknown command"
+	"ERROR - unknown command",
+	"please stop daddy uwu"
 ]
 
 
@@ -42,7 +43,6 @@ let ALIAS_echo = [
 let ALIAS_styles = [
 	"showStyles",
 	"styles"
-
 ];
 
 let DOC_help = `
@@ -154,6 +154,48 @@ new command("StylesTest", ALIAS_styles, DOC_styles, function(user, userID, chann
 	`, lastMessegeChannelID);
 })
 
+let ALIAS_eval = [
+	'eval'
+];
+
+let DOC_eval = [
+	'whatever'
+];
+
+new command("eval", ALIAS_eval, DOC_eval, function(user, userID, channelID, message, cmd, args){
+	let output = eval(message.substr(message.indexOf(" ") + 1));
+
+	if (output) {
+		sendMessage(output, lastMessegeChannelID);
+	}
+});
+
+let ALIAS_create = [
+	'create',
+	'make'
+];
+
+let DOC_create = [
+	'yeet'
+];
+
+new command("create", ALIAS_create, DOC_create, function(user, userID, channelID, message, cmd, args){
+	let _message = message.substr(message.indexOf(" ") + 1);
+	let token = _message.substr(0, _message.indexOf(" "));
+	if(token === 'cmd') {
+		_message = _message.substr(_message.indexOf(" ") + 1);
+		let name = _message.substr(0, _message.indexOf(" "));
+
+		let logic_str = _message.substr(_message.indexOf(" ") + 1);
+
+
+		eval('function logic(user, userID, channelID, message, cmd, args) { ' + logic_str + ' };');
+
+		new command(name, [name], name, logic);
+
+		sendMessage("Done!", lastMessegeChannelID);
+	}
+});
 
 
 bot.on('message', function (user, userID, channelID, message, evt) {
