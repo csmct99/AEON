@@ -1,125 +1,115 @@
-var Discord = require('discord.io');
-var logger = require('winston');
-var auth = require('./auth.json');
+//Libraries
+let Discord = require('discord.io');
+let auth = require('./auth.json');
 
 
 //CONSTANTS
 
-var unknownCommandErrorMessages = [    // WIll pick one of these as the message to display if an unknown command is entered
-"Take that cock out of your mouth, I dont know what the hell you're trying to say, dumbass.",
-"What the fuck did you just say to me you little bitch?",
-"Are you fucking retarded?",
-"I dont know what you mean by 'AION stop pounding my ass'.",
-"Invalid input, dipshit.",
-"Im out of insults and I dont know what that command is.",
-"ERROR - unknown command"
+let unknownCommandErrorMessages = [    // Will pick one of these as the message to display if an unknown command is entered
+	"Take that cock out of your mouth, I dont know what the hell you're trying to say, dumbass.",
+	"What the fuck did you just say to me you little bitch?",
+	"Are you fucking retarded?",
+	"I dont know what you mean by 'AION stop pounding my ass'.",
+	"Invalid input, dipshit.",
+	"Im out of insults and I dont know what that command is.",
+	"ERROR - unknown command"
 ]
 
 
 //COMMAND ALIASES --- PLEASE WRITE ALL ALIASES AS LOWER CASE ---
 
-var ALIAS_help = [
-"help",
-"whatdo",
-"what?",
-"what",
-"?",
-"h",
-"-?"
+let ALIAS_help = [
+	"help",
+	"whatdo",
+	"what?",
+	"what",
+	"?",
+	"h",
+	"-?"
 ];
 
-var ALIAS_testArg = [
-"test"
+let ALIAS_testArg = [
+	"test"
 ];
 
-var ALIAS_echo = {
-"echo",
-"simonsays",
-"say"
-};
-//GLOBAL GARBAGE
+let ALIAS_echo = [
+	"echo",
+	"simonsays",
+	"say",
+	"repeat"
+];
 
-var lastMessegeChannelID;
 
-// Configure logger settings
-logger.remove(logger.transports.Console);
+//GLOBAL VARIABLE GARBAGE
 
-logger.add(new logger.transports.Console, {
-	
-    colorize: true
-	
-});
+let lastMessegeChannelID;
 
-logger.level = 'debug';
 
 // Initialize Discord Bot
-var bot = new Discord.Client({
-	
-   token: auth.token,
-   autorun: true
-   
+let bot = new Discord.Client({
+
+	token: auth.token,
+	autorun: true
+
 });
 
 
 bot.on('ready', function (evt) {
-	
-    logger.info('Connected');
-    logger.info('Logged in as: ');
-    logger.info(bot.username + ' - (' + bot.id + ')');
-	
+	//logger.info
+
+	console.log('Connected');
+	console.log('Logged in as: ' + bot.username + ' - (' + bot.id + ')');
+
 });
 
 
 bot.on('message', function (user, userID, channelID, message, evt) {
-	
-	lastMessegeChannelID = channelID; 
-	
-    if (message.substring(0, 1) == '!') {
-		
-        var args = message.substring(1).split(' ');
-        var cmd = args[0].toLowerCase();
-		
-        args = args.splice(1);
-		
+
+	lastMessegeChannelID = channelID;
+
+    if (message.substring(0, 1) == '!') { //Keyword for now, prob gunna change later
+
+        let args = message.substring(1).split(' '); // Split at spaces
+        let cmd = args[0].toLowerCase(); //after ! but before x y z args  ---->       !______ x y z
+
+        args = args.splice(1); // list of everything after !command
+
 		// Not the best way to go about command alias lookup but effiency isnt the goal, programming simplicity is.
 		if(ALIAS_help.includes(cmd)){
-			
+
 			helpMenu();
-			
+
 		}else if(ALIAS_testArg.includes(cmd) && args.length > 3){
 			sendMessage("test called and args > 3", lastMessegeChannelID);
-			
+
 			args.forEach(function(arg){
 				sendMessage("argument: " + arg, lastMessegeChannelID);
 			})
-			
+
 		}else{ //If no valid command has been entered
-		
+
 			sendMessage(selectRandomFromList(unknownCommandErrorMessages), channelID);
-			
+
 		}
-		
-     }
+
+	}
 });
 
+//Display the help dialoge
 function helpMenu(){
 	sendMessage("***HELP MENU***", lastMessegeChannelID);
 }
 
+//Sends message to the channel with ID ChannelID
 function sendMessage(message, channelID){
-	
 	bot.sendMessage({ to: channelID, message: message });
-	
+	console.log(" Message send : ' " + message + " '");
 }
 
-
+//Select a random item from a list
 function selectRandomFromList(randomList){
-	
-	let randomIndex = Math.floor(Math.random() * (randomList.length + 1));
+
+	let randomIndex = Math.floor(Math.random() * (randomList.length + 1)); // floor to convert to int. (max + 1) becuase otherwise it is exclusive upper range
 	return randomList[randomIndex];
-	
+
 }
-
-
-
-
