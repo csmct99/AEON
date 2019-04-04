@@ -6,7 +6,7 @@ let auth = require('./auth.json');
 //CONSTANTS
 
 let unknownCommandErrorMessages = [    // Will pick one of these as the message to display if an unknown command is entered
-	"Take that cock out of your mouth, I dont know what the hell you're trying to say, dumbass.",
+	"Take that cock out of your mouth, I dont know what the hell you're trying to say.",
 	"What the fuck did you just say to me you little bitch?",
 	"Are you fucking retarded?",
 	"I dont know what you mean by 'AION stop pounding my ass'.",
@@ -39,18 +39,40 @@ let ALIAS_echo = [
 	"repeat"
 ];
 
+let ALIAS_styles = [
+	"showStyles",
+	"styles"
+
+];
+
+let DOC_help = `
+***-- Help --***
+
+Displays help information on the given command
+
+***-- Usage --***
+
+expects one argument
+\`\`\`!help COMMAND_NAME\`\`\`
+`;
+
+let DOC_styles = `
+Shows an example of styles avaliable and their usage.
+
+usage
+\'\'\'!styles\'\'\'
+`
 
 //GLOBAL VARIABLE GARBAGE
 
-let lastMessegeChannelID;
+let lastMessegeChannelID; // Savess the most recent message sent on a visable channel to the bot
+let allCommands = []; //Master command array
 
 
 // Initialize Discord Bot
 let bot = new Discord.Client({
-
 	token: auth.token,
 	autorun: true
-
 });
 
 
@@ -61,6 +83,77 @@ bot.on('ready', function (evt) {
 	console.log('Logged in as: ' + bot.username + ' - (' + bot.id + ')');
 
 });
+
+
+//Initialize Bot Commands / Command Logic
+
+/*
+Class used to store command information. Automatically added to the master class array
+Class used to store command information. Automatically added to the master class array
+
+Command name              :    String
+Command aliases           :    List
+Command documentation     :    String
+Command Logic             :    Function
+*/
+class command{
+
+	// I dont like how JS doesnt force you to Initialize your local variables in classes :(
+	constructor(name, aliases, documentation, logic){
+
+		this.name = name;
+		this.aliases = aliases;
+		this.documentation = documentation;
+		this.logic = logic;
+
+		allCommands.push(this); //Add this command to the master list
+
+	}
+
+	execute(user, userID, channelID, message, cmd, args){
+		this.logic(user, userID, channelID, message, cmd, args);
+	}
+
+	toString(){
+		return "Function name : " + this.name + "\nFunction aliases: " + this.alias + "\n function documentation: ";
+	}
+}
+
+//Commands
+
+new command("Help", ALIAS_help, DOC_help, function(user, userID, channelID, message, cmd, args){
+	sendMessage(this.documentation, lastMessegeChannelID);
+})
+
+new command("StylesTest", ALIAS_styles, DOC_styles, function(user, userID, channelID, message, cmd, args){
+	sendMessage(`
+	__***STYLES***__
+
+	__Underscore__
+	\\_\\_Underscore\\_\\_
+
+	*Italics*
+	\\*Italics\\*
+
+	**Bold**
+	\\*\\*Bold\\*\\*
+
+	***ItalicsBold***
+	\\*\\*\\*ItalicsBold\\*\\*\\*
+
+	~~Strike through~~
+	\\~\\~Strike through\\~\\~
+
+	||Censor||
+	\\|\\|Censor\\|\\|
+
+	\`\`\`Code Block\`\`\`
+	\\\`\\\`\\\`Code Block\\\`\\\`\\\`
+	
+	\n	New line
+	`, lastMessegeChannelID);
+})
+
 
 
 bot.on('message', function (user, userID, channelID, message, evt) {
@@ -74,28 +167,19 @@ bot.on('message', function (user, userID, channelID, message, evt) {
 
         args = args.splice(1); // list of everything after !command
 
-		// Not the best way to go about command alias lookup but effiency isnt the goal, programming simplicity is.
-		//TODO: Look at alternitaves to doing an if else. I want to have an array of all commands somewhere to access too. Maybe dictionaries with [CMD_ALIASES : CMD_LOGIC() ] or something. Could also do it class based and split classes among files.
-		if(ALIAS_help.includes(cmd)){ //!help
+		let commandAliasMatch = false; //flag for if the command matches any in the master list
 
-			helpMenu();
+		allCommands.forEach(function(command){  // for each command in the master list
+			if(command.aliases.includes(cmd)){  //If the command has an alias in this command's alias list
+				command.execute(user, userID, channelID, message, cmd, args);
+				commandAliasMatch = true
+			}
+		})
 
-		}else if(ALIAS_testArg.includes(cmd) && args.length > 2){ // !test arg arg arg
-			sendMessage("test called and args > 2", lastMessegeChannelID);
-
-			args.forEach(function(arg){
-				sendMessage("argument: " + arg, lastMessegeChannelID);
-			})
-
-		}else if(ALIAS_echo.includes(cmd) && args.length > 0){ // !echo arg
-
-			echoMessage(args); //Baiscally just batches and prints all args
-
-		}else{ //If no valid command has been entered
-
-			sendMessage(selectRandomFromList(unknownCommandErrorMessages), channelID);
-
+		if(!commandAliasMatch){ //No command matches the given input AKA wtf does the user want?
+			sendMessage(selectRandomFromList(unknownCommandErrorMessages), channelID); // Send a random "invalid command" message back
 		}
+
 
 	}
 });
@@ -105,6 +189,7 @@ function helpMenu(){
 	sendMessage("***HELP MENU***", lastMessegeChannelID);
 }
 
+//Batches all args and sends them as a single message
 function echoMessage(args){
 	let batch = "";
 
@@ -118,7 +203,7 @@ function echoMessage(args){
 //Sends message to the channel with ID ChannelID
 function sendMessage(message, channelID){
 	bot.sendMessage({ to: channelID, message: message });
-	console.log(" * MESSAGE : ' " + message + " '");
+	console.log(" [*] MESSAGE : \" " + message + " \"");
 }
 
 //Select a random item from a list
