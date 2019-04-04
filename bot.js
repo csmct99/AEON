@@ -69,6 +69,33 @@ bot.on('ready', function (evt) {
 
 });
 
+bot.on('message', function (user, userID, channelID, message, evt) {
+
+	lastMessegeChannelID = channelID;
+
+    if (message.substring(0, 1) == '!') { //Keyword for now, prob gunna change later
+
+        let args = message.substring(1).split(' '); // Split at spaces
+        let cmd = args[0].toLowerCase(); //after ! but before x y z args  ---->       !______ x y z
+
+        args = args.splice(1); // list of everything after !command
+
+		let commandAliasMatch = false; //flag for if the command matches any in the master list
+
+		allCommands.forEach(function(command){  // for each command in the master list
+			if(command.aliases.includes(cmd)){  //If the command has an alias in this command's alias list
+				command.execute(user, userID, channelID, message, cmd, args);
+				commandAliasMatch = true
+			}
+		})
+
+		if(!commandAliasMatch){ //No command matches the given input AKA wtf is the user trying to say?
+			sendMessage(selectRandomFromList(unknownCommandErrorMessages), channelID); // Send a random "invalid command" message back
+		}
+
+
+	}
+});
 
 //Initialize Bot Commands / Command Logic
 
@@ -161,35 +188,6 @@ new command("Styles", ALIAS_styles, DOC_styles, function(user, userID, channelID
 	`, lastMessegeChannelID);
 })
 
-
-
-bot.on('message', function (user, userID, channelID, message, evt) {
-
-	lastMessegeChannelID = channelID;
-
-    if (message.substring(0, 1) == '!') { //Keyword for now, prob gunna change later
-
-        let args = message.substring(1).split(' '); // Split at spaces
-        let cmd = args[0].toLowerCase(); //after ! but before x y z args  ---->       !______ x y z
-
-        args = args.splice(1); // list of everything after !command
-
-		let commandAliasMatch = false; //flag for if the command matches any in the master list
-
-		allCommands.forEach(function(command){  // for each command in the master list
-			if(command.aliases.includes(cmd)){  //If the command has an alias in this command's alias list
-				command.execute(user, userID, channelID, message, cmd, args);
-				commandAliasMatch = true
-			}
-		})
-
-		if(!commandAliasMatch){ //No command matches the given input AKA wtf is the user trying to say?
-			sendMessage(selectRandomFromList(unknownCommandErrorMessages), channelID); // Send a random "invalid command" message back
-		}
-
-
-	}
-});
 
 //Batches all args and sends them as a single message
 function echoMessage(args){
