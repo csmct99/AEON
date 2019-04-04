@@ -41,12 +41,24 @@ let ALIAS_echo = [
 
 let ALIAS_styles = [
 	"showStyles",
-	"styles"
+	"styles",
+	"stylelist",
+	"markup"
 ];
+
+let ALIAS_alias = [
+	"alias",
+	"aliases",
+	"names",
+	"nicknames"
+]
+
 
 let DOC_help = " Displays help information on the given command\n\n** -- Usage -- **\n\nexpects one argument\n\n\`\`\`!help COMMAND_NAME\`\`\`";
 
 let DOC_styles = "Shows an example of styles avaliable and their usage.\n\n** -- Usage -- **\n\n\`\`\`!styles\`\`\`"
+
+let DOC_alias = "Displays a list of all the commands an their aliases.\n\n**-- Usage -- **\n\n\`\`\`!alias\`\`\`"
 
 //GLOBAL VARIABLE GARBAGE
 
@@ -155,7 +167,8 @@ new command("Help", ALIAS_help, DOC_help, function(user, userID, channelID, mess
 		sendMessage( this.name + " - only accepts one argument", lastMessegeChannelID);
 
 	}else{ //No argument sent in
-		sendMessage(this.documentation, lastMessegeChannelID);
+		let helpMsg = "**-- " + command.name + " --**\n\n" + command.documentation;
+		sendMessage(helpMsg, lastMessegeChannelID);
 	}
 })
 
@@ -188,6 +201,25 @@ new command("Styles", ALIAS_styles, DOC_styles, function(user, userID, channelID
 	`, lastMessegeChannelID);
 })
 
+new command("Aliases", ALIAS_alias, DOC_alias, function(user, userID, channelID, message, cmd, args){
+
+	batch = ""
+
+	allCommands.forEach(function(command){  // for each command in the master list
+
+		batch += command.name + "\n";
+
+		command.aliases.forEach(function(alias){
+			batch += alias + ", ";
+		})
+
+		batch += "\n\n"
+
+	})
+
+	sendMessage(batch, lastMessegeChannelID);
+
+})
 
 //Batches all args and sends them as a single message
 function echoMessage(args){
