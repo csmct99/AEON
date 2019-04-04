@@ -75,16 +75,20 @@ bot.on('message', function (user, userID, channelID, message, evt) {
         args = args.splice(1); // list of everything after !command
 
 		// Not the best way to go about command alias lookup but effiency isnt the goal, programming simplicity is.
-		if(ALIAS_help.includes(cmd)){
+		if(ALIAS_help.includes(cmd)){ //!help
 
 			helpMenu();
 
-		}else if(ALIAS_testArg.includes(cmd) && args.length > 3){
-			sendMessage("test called and args > 3", lastMessegeChannelID);
+		}else if(ALIAS_testArg.includes(cmd) && args.length > 2){ // !test arg arg arg
+			sendMessage("test called and args > 2", lastMessegeChannelID);
 
 			args.forEach(function(arg){
 				sendMessage("argument: " + arg, lastMessegeChannelID);
 			})
+
+		}else if(ALIAS_echo.includes(cmd) && args.length > 0){ // !echo arg
+
+			echoMessage(args); //Baiscally just batches and prints all args
 
 		}else{ //If no valid command has been entered
 
@@ -98,6 +102,16 @@ bot.on('message', function (user, userID, channelID, message, evt) {
 //Display the help dialoge
 function helpMenu(){
 	sendMessage("***HELP MENU***", lastMessegeChannelID);
+}
+
+function echoMessage(args){
+	let batch = "";
+
+	args.forEach(function(arg){
+		batch += arg + " ";
+	})
+
+	sendMessage(batch, lastMessegeChannelID);
 }
 
 //Sends message to the channel with ID ChannelID
