@@ -200,7 +200,7 @@ new command("Echo", alias.echo, doc.echo, function(user, userID, channelID, mess
 	sendMessage(batch, lastMessageChannelID);
 });
 
-new command("eval", alias.eval, doc.eval, function(user, userID, channelID, message, cmd, args){
+new command("Eval", alias.eval, doc.eval, function(user, userID, channelID, message, cmd, args){
 
 	let code = message.substr(message.indexOf(" ") + 1);
 
@@ -229,7 +229,7 @@ new command("eval", alias.eval, doc.eval, function(user, userID, channelID, mess
 	}
 });
 
-new command("create", alias.create, doc.create, function(user, userID, channelID, message, cmd, args){
+new command("Create", alias.create, doc.create, function(user, userID, channelID, message, cmd, args){
 	let _message = message.substr(message.indexOf(" ") + 1);
 	let token = _message.substr(0, _message.indexOf(" "));
 
@@ -247,7 +247,6 @@ new command("create", alias.create, doc.create, function(user, userID, channelID
 		sendMessage("Done!", lastMessageChannelID);
 	}
 });
-
 
 /**
  * Sends message to the channel with ID ChannelID
@@ -273,7 +272,7 @@ function loadJSON(file){
 }
 
 /**
- * Randomly selects and item from the list and returns it
+ * Randomly selects an item from the list and returns it
  * @param randomList LIST : OBJECT a list of objects
  * @returns item OBJECT : item of the list
  */
