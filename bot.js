@@ -2,11 +2,14 @@
 const Discord = require('discord.io');
 const auth = require('./auth.json');
 const debug = require("./debugUtils.js");
-let colors = require('colors');
+const colors = require('colors');
+const alias = require("./aliases.js");
+const doc = require("./docs.js");
+
 
 //CONSTANTS
 
-let unknownCommandErrorMessages = [    // Will pick one of these as the message to display if an unknown command is entered
+const UNKNOWN_COMMAND_MESSAGE = [    // Will pick one of these as the message to display if an unknown command is entered
 	"Take that cock out of your mouth, I dont know what the hell you're trying to say.",
 	"What the fuck did you just say to me you little bitch?",
 	"Are you fucking retarded?",
@@ -17,59 +20,18 @@ let unknownCommandErrorMessages = [    // Will pick one of these as the message 
 ];
 
 
-//COMMAND ALIASES --- PLEASE WRITE ALL ALIASES AS LOWER CASE ---
-
-let ALIAS_help = [
-	"help",
-	"whatdo",
-	"what?",
-	"what",
-	"?",
-	"h",
-	"-?"
-];
-
-let ALIAS_echo = [
-	"echo",
-	"simonsays",
-	"say",
-	"repeat"
-];
-
-let ALIAS_styles = [
-	"showStyles",
-	"styles",
-	"stylelist",
-	"markup"
-];
-
-let ALIAS_alias = [
-	"alias",
-	"aliases",
-	"names",
-	"nicknames"
-];
-
-
-let DOC_help = "Displays help information on the given command\n\n** -- Usage -- **\n\nexpects one argument\n\n\`\`\`!help COMMAND_NAME\`\`\`";
-
-let DOC_styles = "Shows an example of styles avaliable and their usage.\n\n** -- Usage -- **\n\n\`\`\`!styles\`\`\`";
-
-let DOC_alias = "Displays a list of all the commands an their aliases.\n\n**-- Usage -- **\n\n\`\`\`!alias\`\`\`";
-
-let DOC_echo = "Repeats whatever was input back as a message.\n\n** -- Usage --**\n\n\`\`\`!echo this message will be sent back by AEON\`\`\`";
 //GLOBAL VARIABLE GARBAGE
 
-let lastMessegeChannelID; // Savess the most recent message sent on a channel visable to the bot
+let lastMessageChannelID; // Saves the most recent message sent on a channel visible to the bot
 let allCommands = []; //Master command array
 
 
 // Initialize Discord Bot
+debug.log("Initializing ...");
 let bot = new Discord.Client({
 	token: auth.token,
 	autorun: true
 });
-
 
 bot.on('ready', function (evt) {
 
@@ -79,7 +41,7 @@ bot.on('ready', function (evt) {
 
 bot.on('message', function (user, userID, channelID, message, evt) {
 
-	lastMessegeChannelID = channelID;
+	lastMessageChannelID = channelID;
 
     if (message.substring(0, 1) === '!') { //Keyword for now, prob gunna change later
 
@@ -98,14 +60,14 @@ bot.on('message', function (user, userID, channelID, message, evt) {
 		});
 
 		if(!commandAliasMatch){ //No command matches the given input AKA wtf is the user trying to say?
-			sendMessage(selectRandomFromList(unknownCommandErrorMessages), channelID); // Send a random "invalid command" message back
+			sendMessage(selectRandomFromList(UNKNOWN_COMMAND_MESSAGE), channelID); // Send a random "invalid command" message back
 		}
 
 	}
 });
 
-//Initialize Bot Commands / Command Logic
 
+//Setup commands
 
 /**
   Class used to store command information. Automatically added to the master class array
@@ -144,7 +106,7 @@ class command{
 }
 
 //Commands
-new command("Help", ALIAS_help, DOC_help, function(user, userID, channelID, message, cmd, args){
+new command("Help", alias.help, doc.help, function(user, userID, channelID, message, cmd, args){
 	if(args.length === 1){ //If there is an argument
 
 		let commandAliasMatch = false; //flag for if the arg matches any in the master list
@@ -152,26 +114,26 @@ new command("Help", ALIAS_help, DOC_help, function(user, userID, channelID, mess
 		allCommands.forEach(function(command){  // for each command in the master list
 			if(command.aliases.includes(args[0])){  //If the arg has a matching alias in this command's alias list
 				let helpMsg = "**-- " + command.name + " --**\n\n" + command.documentation;
-				sendMessage(helpMsg, lastMessegeChannelID);
+				sendMessage(helpMsg, lastMessageChannelID);
 				commandAliasMatch = true
 			}
 		});
 
 		if(!commandAliasMatch){ //If the command was never found
 			debug.logError("Failed to find command : " + args[0]);
-			sendMessage("Command could not be found. ", lastMessegeChannelID);
+			sendMessage("Command could not be found. ", lastMessageChannelID);
 		}
 
 	}else if(args.length > 1){ //Wrong arg length
-		sendMessage( this.name + " - only accepts one argument", lastMessegeChannelID);
+		sendMessage( this.name + " - only accepts one argument", lastMessageChannelID);
 
 	}else{ //No argument sent in
 		let helpMsg = "**-- " + command.name + " --**\n\n" + command.documentation;
-		sendMessage(helpMsg, lastMessegeChannelID);
+		sendMessage(helpMsg, lastMessageChannelID);
 	}
 });
 
-new command("Styles", ALIAS_styles, DOC_styles, function(user, userID, channelID, message, cmd, args){
+new command("Styles", alias.styles, doc.styles, function(user, userID, channelID, message, cmd, args){
 	sendMessage(`
 	__***STYLES***__
 
@@ -197,37 +159,37 @@ new command("Styles", ALIAS_styles, DOC_styles, function(user, userID, channelID
 
 	New line
 	\\n
-	`, lastMessegeChannelID);
+	`, lastMessageChannelID);
 })
 
-new command("Aliases", ALIAS_alias, DOC_alias, function(user, userID, channelID, message, cmd, args){
+new command("Aliases", alias.alias, doc.alias, function(user, userID, channelID, message, cmd, args){
 
 	let batch = "";
 
 	allCommands.forEach(function(command){  // for each command in the master list
 
-		batch += command.name + "\n";
+		batch += "**" + command.name + "**\n";
 
 		command.aliases.forEach(function(alias){
-			batch += alias + ", ";
+			batch += "*" + alias + "*,  ";
 		});
 
 		batch += "\n\n"
 
 	});
 
-	sendMessage(batch, lastMessegeChannelID);
+	sendMessage(batch, lastMessageChannelID);
 
 });
 
-new command("Echo", ALIAS_echo, DOC_echo, function(user, userID, channelID, message, cmd, args){
+new command("Echo", alias.echo, doc.echo, function(user, userID, channelID, message, cmd, args){
 	let batch = "";
 
 	args.forEach(function(arg){
 		batch += arg + " ";
 	});
 
-	sendMessage(batch, lastMessegeChannelID);
+	sendMessage(batch, lastMessageChannelID);
 });
 
 
@@ -238,7 +200,7 @@ new command("Echo", ALIAS_echo, DOC_echo, function(user, userID, channelID, mess
  */
 function sendMessage(message, channelID){
 	bot.sendMessage({ to: channelID, message: message });
-	debug.log("Sent Message : \"" + message + "\"");
+	debug.log("Sent Message : \n\n" + message);
 }
 
 /**
