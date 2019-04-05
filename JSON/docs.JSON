@@ -5,5 +5,9 @@
   
   "alias" : "Displays a list of all the commands an their aliases.\n\n**-- Usage -- **\n\n```!alias```",
   
-  "echo" : "Repeats whatever was input back as a message.\n\n** -- Usage --**\n\n```!echo this message will be sent back by AEON```"
+  "echo" : "Repeats whatever was input back as a message.\n\n** -- Usage --**\n\n```!echo this message will be sent back by AEON```",
+
+  "eval" : "NO DOCS YET",
+
+  "create" : "NO DOCS YET"
 }
