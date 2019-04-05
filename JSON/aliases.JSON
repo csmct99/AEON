@@ -28,5 +28,16 @@
 	"aliases",
 	"names",
 	"nicknames"
+	],
+
+	"eval" : [
+	"eval",
+	"evaluate",
+	"do"
+	],
+
+	"create" : [
+	"create",
+	"make"
 	]
 }
