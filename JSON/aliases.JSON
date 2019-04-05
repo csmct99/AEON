@@ -1,4 +1,5 @@
-exports.help = [
+{
+	"help" : [
 	"help",
 	"whatdo",
 	"what?",
@@ -6,25 +7,26 @@ exports.help = [
 	"?",
 	"h",
 	"-?"
-];
+	],
 
-exports.echo = [
+	"echo" : [
 	"echo",
 	"simonsays",
 	"say",
 	"repeat"
-];
+	],
 
-exports.styles = [
+	"styles" : [
 	"showStyles",
 	"styles",
 	"stylelist",
 	"markup"
-];
+	],
 
-exports.alias = [
+	"alias" : [
 	"alias",
 	"aliases",
 	"names",
 	"nicknames"
-];
+	]
+}

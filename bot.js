@@ -3,9 +3,10 @@ const Discord = require('discord.io');
 const auth = require('./auth.json');
 const debug = require("./debugUtils.js");
 const colors = require('colors');
-const alias = require("./aliases.js");
-const doc = require("./docs.js");
-
+//const alias = require("./aliases.js");
+//const doc = require("./docs.js");
+const fs = require('fs');
+const process = require("process");
 
 //CONSTANTS
 
@@ -26,16 +27,23 @@ let lastMessageChannelID; // Saves the most recent message sent on a channel vis
 let allCommands = []; //Master command array
 
 
-// Initialize Discord Bot
-debug.log("Initializing ...");
+// Initialize everything
+
+debug.log("Initializing bot ...");
+
 let bot = new Discord.Client({
 	token: auth.token,
 	autorun: true
 });
 
-bot.on('ready', function (evt) {
+let doc = loadJSON("JSON/docs.json");
+let alias = loadJSON("JSON/aliases.json");
 
-	debug.logSuccess('Connected');
+debug.logSuccess("JSON Loading Complete");
+
+
+bot.on('ready', function (evt) {
+	debug.logSuccess("Connected to bot");
 	debug.log('Logged in as: ' + bot.username + ' - (' + bot.id + ')');
 });
 
@@ -201,6 +209,19 @@ new command("Echo", alias.echo, doc.echo, function(user, userID, channelID, mess
 function sendMessage(message, channelID){
 	bot.sendMessage({ to: channelID, message: message });
 	debug.log("Sent Message : \n\n" + message);
+}
+
+function loadJSON(file){
+	//TODO: add try catches for error handling
+	let startTime = process.hrtime();
+
+	let rawJSON = fs.readFileSync(file);
+	let parsedJSON = JSON.parse(rawJSON);
+
+	debug.log(file + " loaded successfully in " + process.hrtime(startTime)[1]/1000000 + " ms");
+
+	return parsedJSON;
+
 }
 
 /**
