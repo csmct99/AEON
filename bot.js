@@ -1,7 +1,8 @@
 //Libraries
-let Discord = require('discord.io');
-let auth = require('./auth.json');
-
+const Discord = require('discord.io');
+const auth = require('./auth.json');
+const debug = require("./debugUtils.js");
+let colors = require('colors');
 
 //CONSTANTS
 
@@ -13,7 +14,7 @@ let unknownCommandErrorMessages = [    // Will pick one of these as the message 
 	"Invalid input, dipshit.",
 	"Im out of insults and I dont know what that command is.",
 	"ERROR - unknown command"
-]
+];
 
 
 //COMMAND ALIASES --- PLEASE WRITE ALL ALIASES AS LOWER CASE ---
@@ -26,10 +27,6 @@ let ALIAS_help = [
 	"?",
 	"h",
 	"-?"
-];
-
-let ALIAS_testArg = [
-	"test"
 ];
 
 let ALIAS_echo = [
@@ -51,15 +48,16 @@ let ALIAS_alias = [
 	"aliases",
 	"names",
 	"nicknames"
-]
+];
 
 
-let DOC_help = " Displays help information on the given command\n\n** -- Usage -- **\n\nexpects one argument\n\n\`\`\`!help COMMAND_NAME\`\`\`";
+let DOC_help = "Displays help information on the given command\n\n** -- Usage -- **\n\nexpects one argument\n\n\`\`\`!help COMMAND_NAME\`\`\`";
 
-let DOC_styles = "Shows an example of styles avaliable and their usage.\n\n** -- Usage -- **\n\n\`\`\`!styles\`\`\`"
+let DOC_styles = "Shows an example of styles avaliable and their usage.\n\n** -- Usage -- **\n\n\`\`\`!styles\`\`\`";
 
-let DOC_alias = "Displays a list of all the commands an their aliases.\n\n**-- Usage -- **\n\n\`\`\`!alias\`\`\`"
+let DOC_alias = "Displays a list of all the commands an their aliases.\n\n**-- Usage -- **\n\n\`\`\`!alias\`\`\`";
 
+let DOC_echo = "Repeats whatever was input back as a message.\n\n** -- Usage --**\n\n\`\`\`!echo this message will be sent back by AEON\`\`\`";
 //GLOBAL VARIABLE GARBAGE
 
 let lastMessegeChannelID; // Savess the most recent message sent on a channel visable to the bot
@@ -74,18 +72,16 @@ let bot = new Discord.Client({
 
 
 bot.on('ready', function (evt) {
-	//logger.info
 
-	console.log('Connected');
-	console.log('Logged in as: ' + bot.username + ' - (' + bot.id + ')');
-
+	debug.logSuccess('Connected');
+	debug.log('Logged in as: ' + bot.username + ' - (' + bot.id + ')');
 });
 
 bot.on('message', function (user, userID, channelID, message, evt) {
 
 	lastMessegeChannelID = channelID;
 
-    if (message.substring(0, 1) == '!') { //Keyword for now, prob gunna change later
+    if (message.substring(0, 1) === '!') { //Keyword for now, prob gunna change later
 
         let args = message.substring(1).split(' '); // Split at spaces
         let cmd = args[0].toLowerCase(); //after ! but before x y z args  ---->       !______ x y z
@@ -99,30 +95,34 @@ bot.on('message', function (user, userID, channelID, message, evt) {
 				command.execute(user, userID, channelID, message, cmd, args);
 				commandAliasMatch = true
 			}
-		})
+		});
 
 		if(!commandAliasMatch){ //No command matches the given input AKA wtf is the user trying to say?
 			sendMessage(selectRandomFromList(unknownCommandErrorMessages), channelID); // Send a random "invalid command" message back
 		}
-
 
 	}
 });
 
 //Initialize Bot Commands / Command Logic
 
-/*
-Class used to store command information. Automatically added to the master class array
-Class used to store command information. Automatically added to the master class array
 
-Command name              :    String
-Command aliases           :    List
-Command documentation     :    String
-Command Logic             :    Function
-*/
+/**
+  Class used to store command information. Automatically added to the master class array
+
+  Command name              :    String
+  Command aliases           :    List
+  Command documentation     :    String
+  Command Logic             :    Function
+ */
 class command{
 
-	// I dont like how JS doesnt force you to Initialize your local variables in classes :(
+	/**
+	 * @param name STRING : ame of the command, only gets used when looking at the command in a menu
+	 * @param aliases LIST : STRING : a list of aliases used by this command
+	 * @param documentation STRING : documentation regarding the command. Please include example usage if it can use arguments
+	 * @param logic FUNCTION : the function to be run when this command is called. make sure it takes in (user, userID, channelID, message, cmd, args)
+	 */
 	constructor(name, aliases, documentation, logic){
 
 		this.name = name;
@@ -144,9 +144,8 @@ class command{
 }
 
 //Commands
-
 new command("Help", ALIAS_help, DOC_help, function(user, userID, channelID, message, cmd, args){
-	if(args.length == 1){ //If there is an argument
+	if(args.length === 1){ //If there is an argument
 
 		let commandAliasMatch = false; //flag for if the arg matches any in the master list
 
@@ -156,10 +155,10 @@ new command("Help", ALIAS_help, DOC_help, function(user, userID, channelID, mess
 				sendMessage(helpMsg, lastMessegeChannelID);
 				commandAliasMatch = true
 			}
-		})
+		});
 
 		if(!commandAliasMatch){ //If the command was never found
-			console.log(" [!] Failed to find command : " + args[0]);
+			debug.logError("Failed to find command : " + args[0]);
 			sendMessage("Command could not be found. ", lastMessegeChannelID);
 		}
 
@@ -170,7 +169,7 @@ new command("Help", ALIAS_help, DOC_help, function(user, userID, channelID, mess
 		let helpMsg = "**-- " + command.name + " --**\n\n" + command.documentation;
 		sendMessage(helpMsg, lastMessegeChannelID);
 	}
-})
+});
 
 new command("Styles", ALIAS_styles, DOC_styles, function(user, userID, channelID, message, cmd, args){
 	sendMessage(`
@@ -203,7 +202,7 @@ new command("Styles", ALIAS_styles, DOC_styles, function(user, userID, channelID
 
 new command("Aliases", ALIAS_alias, DOC_alias, function(user, userID, channelID, message, cmd, args){
 
-	batch = ""
+	let batch = "";
 
 	allCommands.forEach(function(command){  // for each command in the master list
 
@@ -211,34 +210,42 @@ new command("Aliases", ALIAS_alias, DOC_alias, function(user, userID, channelID,
 
 		command.aliases.forEach(function(alias){
 			batch += alias + ", ";
-		})
+		});
 
 		batch += "\n\n"
 
-	})
+	});
 
 	sendMessage(batch, lastMessegeChannelID);
 
-})
+});
 
-//Batches all args and sends them as a single message
-function echoMessage(args){
+new command("Echo", ALIAS_echo, DOC_echo, function(user, userID, channelID, message, cmd, args){
 	let batch = "";
 
 	args.forEach(function(arg){
 		batch += arg + " ";
-	})
+	});
 
 	sendMessage(batch, lastMessegeChannelID);
-}
+});
 
-//Sends message to the channel with ID ChannelID
+
+/**
+ * Sends message to the channel with ID ChannelID
+ * @param message STRING : message to be sent
+ * @param channelID INT : channelID that the message should be sent to. (You get this manually in discord its static)
+ */
 function sendMessage(message, channelID){
 	bot.sendMessage({ to: channelID, message: message });
-	console.log(" [*] MESSAGE : \" " + message + " \"");
+	debug.log("Sent Message : \"" + message + "\"");
 }
 
-//Select a random item from a list
+/**
+ * Randomly selects and item from the list and returns it
+ * @param randomList LIST : OBJECT a list of objects
+ * @returns item OBJECT : item of the list
+ */
 function selectRandomFromList(randomList){
 
 	let randomIndex = Math.floor(Math.random() * (randomList.length + 1)); // floor to convert to int. (max + 1) becuase otherwise it is exclusive upper range
