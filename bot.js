@@ -3,8 +3,6 @@ const Discord = require('discord.io');
 const auth = require('./auth.json');
 const debug = require("./debugUtils.js");
 const colors = require('colors');
-//const alias = require("./aliases.js");
-//const doc = require("./docs.js");
 const fs = require('fs');
 const process = require("process");
 
@@ -68,12 +66,11 @@ bot.on('message', function (user, userID, channelID, message, evt) {
 		});
 
 		if(!commandAliasMatch){ //No command matches the given input AKA wtf is the user trying to say?
-			sendMessage(selectRandomFromList(UNKNOWN_COMMAND_MESSAGE), channelID); // Send a random "invalid command" message back
+			sendMessage(selectRandomFromList(UNKNOWN_COMMAND_MESSAGE)); // Send a random "invalid command" message back
 		}
 
 	}
 });
-
 
 //Setup commands
 
@@ -122,26 +119,26 @@ new command("Help", alias.help, doc.help, function(user, userID, channelID, mess
 		allCommands.forEach(function(command){  // for each command in the master list
 			if(command.aliases.includes(args[0])){  //If the arg has a matching alias in this command's alias list
 				let helpMsg = "**-- " + command.name + " --**\n\n" + command.documentation;
-				sendMessage(helpMsg, lastMessageChannelID);
+				sendMessage(helpMsg);
 				commandAliasMatch = true
 			}
 		});
 
 		if(!commandAliasMatch){ //If the command was never found
 			debug.logError("Failed to find command : " + args[0]);
-			sendMessage("Command could not be found. ", lastMessageChannelID);
+			sendMessage("Command could not be found. ");
 		}
 
 	}else if(args.length > 1){ //Wrong arg length
-		sendMessage( this.name + " - only accepts one argument", lastMessageChannelID);
+		sendMessage( this.name + " - only accepts one argument");
 
 	}else{ //No argument sent in
 		let helpMsg = "**-- " + command.name + " --**\n\n" + command.documentation;
-		sendMessage(helpMsg, lastMessageChannelID);
+		sendMessage(helpMsg);
 	}
 });
 
-new command("Styles", alias.styles, doc.styles, function(user, userID, channelID, message, cmd, args){
+new command("Styles List", alias.styles, doc.styles, function(user, userID, channelID, message, cmd, args){
 	sendMessage(`
 	__***STYLES***__
 
@@ -167,10 +164,10 @@ new command("Styles", alias.styles, doc.styles, function(user, userID, channelID
 
 	New line
 	\\n
-	`, lastMessageChannelID);
-})
+	`);
+});
 
-new command("Aliases", alias.alias, doc.alias, function(user, userID, channelID, message, cmd, args){
+new command("Aliases List", alias.alias, doc.alias, function(user, userID, channelID, message, cmd, args){
 
 	let batch = "";
 
@@ -186,7 +183,7 @@ new command("Aliases", alias.alias, doc.alias, function(user, userID, channelID,
 
 	});
 
-	sendMessage(batch, lastMessageChannelID);
+	sendMessage(batch);
 
 });
 
@@ -197,10 +194,10 @@ new command("Echo", alias.echo, doc.echo, function(user, userID, channelID, mess
 		batch += arg + " ";
 	});
 
-	sendMessage(batch, lastMessageChannelID);
+	sendMessage(batch);
 });
 
-new command("Eval", alias.eval, doc.eval, function(user, userID, channelID, message, cmd, args){
+new command("Evaluate Expression", alias.eval, doc.eval, function(user, userID, channelID, message, cmd, args){
 
 	let code = message.substr(message.indexOf(" ") + 1);
 
@@ -211,7 +208,7 @@ new command("Eval", alias.eval, doc.eval, function(user, userID, channelID, mess
 	}
 
 	if(code.includes('while') || code.includes('for')) {
-		sendMessage('Nice Try Fag', lastMessageChannelID);
+		sendMessage('Nice Try Fag');
 	} else {
 
 		try {
@@ -219,12 +216,12 @@ new command("Eval", alias.eval, doc.eval, function(user, userID, channelID, mess
 			let output = eval(code);
 
 			if(!silence) {
-				sendMessage('Output: ' + output, lastMessageChannelID);
+				sendMessage('Output: ' + output);
 			}
 
 
 		} catch(err) {
-			sendMessage('Learn to code retard: ' + err.message, lastMessageChannelID);
+			sendMessage('Learn to code retard: ' + err.message);
 		}
 	}
 });
@@ -244,8 +241,20 @@ new command("Create", alias.create, doc.create, function(user, userID, channelID
 
 		new command(name, [name], name, logic);
 
-		sendMessage("Done!", lastMessageChannelID);
+		sendMessage("Done!");
 	}
+});
+
+new command("Commands List", alias.commands, doc.commands, function(user, userID, channelID, message, cmd, args){
+
+	let batch = "** -- COMMANDS LIST -- \`\`\`\n"; //Begin a bold and code block
+
+	allCommands.forEach(function(command) {
+		batch += command.aliases[0] + "\n   " + command.documentation.split("\n")[0] + "\n\n"; //Splits the docs up by \n and grabs the first item (the one liner explanation)
+	});
+
+	batch += "\`\`\`**"; //End the bold and code block
+	sendMessage(batch);
 });
 
 /**
@@ -253,11 +262,18 @@ new command("Create", alias.create, doc.create, function(user, userID, channelID
  * @param message STRING : message to be sent
  * @param channelID INT : channelID that the message should be sent to. (You get this manually in discord its static)
  */
-function sendMessage(message, channelID){
+function sendMessage(message, channelID = lastMessageChannelID){
+
 	bot.sendMessage({ to: channelID, message: message });
-	debug.log("Sent Message : \n\n" + message);
+
+	debug.log("Sent Message : " + colors.grey(message.split("\n")[0])); //Only prints the first line of the message for readability of logs
 }
 
+/**
+ * Loads the given JSON file and returns an object representing its data
+ * @param file STRING : file location
+ * @returns {any} object representing JSON data
+ */
 function loadJSON(file){
 	//TODO: add try catches for error handling
 	let startTime = process.hrtime();

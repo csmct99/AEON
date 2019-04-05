@@ -40,6 +40,16 @@ exports.log = function(message){
 
 };
 
+/**
+ * logs debug test info as yellow asterisk and green text
+ * @param message debug test info
+ */
+exports.logTest = function(message){
+
+    console.log("[" + colors.yellow("*") + "] " + colors.green(message));
+
+};
+
 
 
 
