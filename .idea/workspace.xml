@@ -13,8 +13,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/bot.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="310">
-              <caret line="106" lean-forward="true" selection-start-line="106" selection-end-line="106" />
+            <state relative-caret-position="293">
+              <caret line="105" column="1" selection-start-line="105" selection-start-column="1" selection-end-line="105" selection-end-column="1" />
               <folding>
                 <element signature="e#178#621#0" />
                 <element signature="e#1617#1655#0" />
@@ -142,12 +142,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1554473707658</updated>
-      <workItem from="1554473721656" duration="5970000" />
+      <workItem from="1554473721656" duration="6276000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="5970000" />
+    <option name="totallyTimeSpent" value="6276000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1616" height="916" extended-state="6" />
@@ -212,8 +212,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/bot.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="310">
-          <caret line="106" lean-forward="true" selection-start-line="106" selection-end-line="106" />
+        <state relative-caret-position="293">
+          <caret line="105" column="1" selection-start-line="105" selection-start-column="1" selection-end-line="105" selection-end-column="1" />
           <folding>
             <element signature="e#178#621#0" />
             <element signature="e#1617#1655#0" />
