@@ -192,6 +192,55 @@ new command("Echo", alias.echo, doc.echo, function(user, userID, channelID, mess
 	sendMessage(batch, lastMessageChannelID);
 });
 
+new command("eval", ALIAS_eval, DOC_eval, function(user, userID, channelID, message, cmd, args){
+
+	let code = message.substr(message.indexOf(" ") + 1);
+
+	let silence = code.includes('-s');
+
+	if(silence) {
+		code = code.replace('-s', ' ');
+	}
+
+	if(code.includes('while') || code.includes('for')) {
+		sendMessage('Nice Try Fag', lastMessegeChannelID);
+	} else {
+
+		try {
+
+			let output = eval(code);
+
+			if(!silence) {
+				sendMessage('Output: ' + output, lastMessegeChannelID);
+			}
+
+
+		} catch(err) {
+			sendMessage('Learn to code retard: ' + err.message, lastMessegeChannelID);
+		}
+	}
+});
+
+
+new command("create", ALIAS_create, DOC_create, function(user, userID, channelID, message, cmd, args){
+	let _message = message.substr(message.indexOf(" ") + 1);
+	let token = _message.substr(0, _message.indexOf(" "));
+
+	if(token === 'cmd') {
+		_message = _message.substr(_message.indexOf(" ") + 1);
+		let name = _message.substr(0, _message.indexOf(" "));
+
+		let logic_str = _message.substr(_message.indexOf(" ") + 1);
+
+
+		eval('function logic(user, userID, channelID, message, cmd, args) { ' + logic_str + ' };');
+
+		new command(name, [name], name, logic);
+
+		sendMessage("Done!", lastMessegeChannelID);
+	}
+});
+
 
 /**
  * Sends message to the channel with ID ChannelID

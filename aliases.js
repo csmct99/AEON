@@ -28,3 +28,14 @@ exports.alias = [
 	"names",
 	"nicknames"
 ];
+
+exports.eval = [
+	"eval",
+	"evaluate",
+	"do"
+];
+
+exports.create = [
+	'create',
+	'make'
+];
