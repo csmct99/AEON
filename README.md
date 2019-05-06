@@ -1,7 +1,5 @@
 # AEON - Goal
 
-***Please be aware, this bot is vulgar and is just for fun***
-
 This discord bot is just a fun little side project for a personal discord server, 
 going in we have some plans but not much set in stone so it could turn into anything really
 
