@@ -203,7 +203,7 @@ new command("Evaluate Expression", alias.eval, doc.eval, function(user, userID, 
 	}
 
 	if(code.includes('while') || code.includes('for')) {
-		sendMessage('Nice Try Fag');
+		sendMessage('ERROR - no while loops please. This can easily cause the main thread to be locked up');
 	} else {
 
 		try {
