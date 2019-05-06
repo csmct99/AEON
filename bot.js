@@ -9,13 +9,8 @@ const process = require("process");
 //CONSTANTS
 
 const UNKNOWN_COMMAND_MESSAGE = [    // Will pick one of these as the message to display if an unknown command is entered
-	"Take that cock out of your mouth, I dont know what the hell you're trying to say.",
-	"What the fuck did you just say to me you little bitch?",
-	"Are you fucking retarded?",
-	"I dont know what you mean by 'AION stop pounding my ass'.",
-	"Invalid input, dipshit.",
-	"Im out of insults and I dont know what that command is.",
-	"ERROR - unknown command"
+	"ERROR - unknown command",
+	"I dont understand what you mean, please try again"
 ];
 
 
