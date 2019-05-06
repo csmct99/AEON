@@ -47,7 +47,7 @@ bot.on('message', function (user, userID, channelID, message, evt) {
     if (message.substring(0, 1) === '!') { //Keyword for now, prob gunna change later
 
         let args = message.substring(1).split(' '); // Split at spaces
-        let cmd = args[0].toLowerCase(); //after ! but before x y z args  ---->       !______ x y z
+        let cmd = args[0].toLowerCase(); //after ! but before x y z args  --->       !______ x y z
 
         args = args.splice(1); // list of everything after !command
 
