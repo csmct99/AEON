@@ -11,7 +11,7 @@ Use the ```!help``` command to get general and specific info on certain commands
 
 ```!help styles```
 
-Use command ```!list``` to see a list of all available commands
+Use command ```!commands``` to see a list of all available commands
 
 a list of our current commands
 ```
@@ -21,10 +21,11 @@ alias               -- Returns all commands and their aliases (Adding alias at r
 echo arg            -- Echos back the arguments of the command
 eval arg            -- Evaluates a JS expression
 create name arg     -- Creates a new command given a JS function to execute upon calling the command
+commands            -- Displays all available commands
 ```
 
 # AEON - Setup
-You can download the files as is and run assuming node.js (10.15.3) is installed
+You can download the files as is and run bot.js with node assuming node.js (developed with 10.15.3) is installed
 
 You can check your version with ``` node -v```
 
@@ -52,6 +53,8 @@ The bot is now running on your machine from the terminal you ran the command fro
 We plan on moving ours to a dedicated raspberry pi eventually
 
 It should look like this on a successful startup
+
+
 ![startup](https://i.gyazo.com/a82535a200939d24ecf12d8f7a4de466.png)
 
 # AEON - Documentation
